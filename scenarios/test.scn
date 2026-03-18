@@ -1,0 +1,200 @@
+<?xml version="1.0"?>
+<scenario>
+  <looks>
+    <look name="black" gray="0.05" roughness="0.2" metalness="0.0"/>
+    <look name="gray" gray="1.0" roughness="0.2" metalness="0.0"/>
+    <look name="transparent" gray="1.0" roughness="0.0" metalness="0.0"/>
+    <look name="blue" rgb="0.0 0.3 0.8" roughness="0.0"/>
+    <look name="yellow" rgb="1.0 1.0 0.0" roughness="0.0"/>
+    <look name="manipulator" rgb="0.2 0.2 0.2" roughness="0.5"/>
+  </looks>
+
+  <robot name="blueboat" fixed="false" self_collisions="false">
+
+    <!--
+      Enfoque recomendado:
+      - compound physics="floating": barco de superficie (buoyancy + drag, sin added mass).
+      - Un único Hull EXTERNAL: define drag + buoyancy de forma simétrica.
+      - Internals: masas/volúmenes internos sin meter drag raro.
+    -->
+    <base_link name="blueboat/base_link" type="compound" physics="floating">
+
+      <!-- HULL (EXTERNAL) =====================================================
+           Este mesh debe estar:
+           - centrado en (0,0,0) en su propio archivo
+           - simétrico L/R
+           - escala en metros
+           Si no tienes dos meshes (phy/vis), usa el mismo en ambos.
+      -->
+      <external_part name="Hull" type="model" physics="floating" buoyant="true">
+        <physical>
+          <mesh filename="opti_blueboat/blueboat_hull_phy.obj" scale="1.0"/>
+          <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+          <!-- thickness opcional si es casco tipo shell -->
+          <thickness value="0.02"/>
+        </physical>
+
+        <!-- Visual opcional. Si no tienes, puedes borrar <visual> entero. -->
+        <visual>
+          <mesh filename="opti_blueboat/blueboat_hull_vis.obj" scale="1.0"/>
+          <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+        </visual>
+
+        <material name="Polyamid"/>
+        <look name="blue"/>
+
+        <!-- No pongas masa aquí si quieres que Stonefish estime volumen/CB.
+             Si necesitas masa total realista, la ajustamos con "ballast" interno. -->
+        <compound_transform rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+
+        <!-- Si quieres sobreescribir drag para depurar:
+        <hydrodynamics viscous_drag="0.05 0.08 0.08" quadratic_drag="0.2 0.6 0.6"/>
+        -->
+      </external_part>
+
+      <!-- INTERNOS (masa, CG, etc.) ==========================================
+           Internals contribuyen a buoyancy (según doc) pero NO a drag (en compound).
+           Úsalos para ajustar masa total y centro de masas sin “ensuciar” el drag.
+      -->
+
+      <!-- Ballast centrado: úsalo para fijar masa total y que CG quede centrado.
+           Ajusta mass para aproximarte a la masa real del barco.
+      -->
+      <internal_part name="Ballast" type="box" physics="floating" buoyant="false">
+        <dimensions xyz="0.40 0.20 0.10"/>
+        <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 -0.05"/>
+        <material name="Neutral"/>
+        <mass value="15.0"/>
+        <look name="manipulator"/>
+        <compound_transform rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+      </internal_part>
+
+      <!-- Baterías simétricas: mismo volumen/masa, espejo en Y -->
+      <internal_part name="BatteryCylinder1" type="cylinder" physics="floating" buoyant="false">
+        <dimensions radius="0.08" height="0.7"/>
+        <origin rpy="0.0 1.5708 0.0" xyz="0.0 -0.26 -0.10"/>
+        <material name="Neutral"/>
+        <mass value="0.5"/>
+        <look name="manipulator"/>
+        <compound_transform rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+      </internal_part>
+
+      <internal_part name="BatteryCylinder2" type="cylinder" physics="floating" buoyant="false">
+        <dimensions radius="0.08" height="0.7"/>
+        <origin rpy="0.0 1.5708 0.0" xyz="0.0 0.26 -0.10"/>
+        <material name="Neutral"/>
+        <mass value="0.5"/>
+        <look name="manipulator"/>
+        <compound_transform rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+      </internal_part>
+
+      <!-- Si quieres conservar barras/partes decorativas, hazlas internal si no quieres que metan drag raro.
+           Si quieres colisiones “externas”, entonces external, pero SOLO si están simétricas.
+      -->
+
+    </base_link>
+
+    <!-- THRUSTERS =============================================================
+         Los dos idénticos: mismo mesh, mismo modelo, posiciones simétricas.
+         rpy=0 por defecto; si luego ves que el empuje no va en +X del barco,
+         ajustamos rpy, pero siempre igual en ambos.
+    -->
+    <actuator name="Thruster_R" type="thruster">
+      <specs max_setpoint="300.0" normalized_setpoint="true" inverted_setpoint="false"/>
+      <propeller diameter="0.112" right="true">
+        <mesh filename="opti_blueboat/propeller_cc.obj" scale="1"/>
+        <material name="Neutral"/>
+        <look name="yellow"/>
+      </propeller>
+      <rotor_dynamics type="first_order">
+        <time_constant value="0.2"/>
+      </rotor_dynamics>
+      <thrust_model type="linear_interpolation">
+        <input  value="-295.729 -277.926 -232.897 -144.094 -60.737 0 56.235 154.671 203.156 266.826 288.084"/>
+        <output value="-27.557 -23.732 -15.396 -5.884 -0.883 0 2.059 15.495 27.066 42.757 52.564"/>
+      </thrust_model>
+      <origin rpy="0.0 0.0 0.0" xyz="-0.472 0.28 0.0245"/>
+      <link name="blueboat/base_link"/>
+    </actuator>
+    
+    <actuator name="Thruster_L" type="thruster">
+      <specs max_setpoint="300.0" normalized_setpoint="true" inverted_setpoint="false"/>
+      <propeller diameter="0.112" right="true">
+        <mesh filename="opti_blueboat/propeller_cc.obj" scale="1"/>
+        <material name="Neutral"/>
+        <look name="yellow"/>
+      </propeller>
+      <rotor_dynamics type="first_order">
+        <time_constant value="0.2"/>
+      </rotor_dynamics>
+      <thrust_model type="linear_interpolation">
+        <input  value="-295.729 -277.926 -232.897 -144.094 -60.737 0 56.235 154.671 203.156 266.826 288.084"/>
+        <output value="-27.557 -23.732 -15.396 -5.884 -0.883 0 2.059 15.495 27.066 42.757 52.564"/>
+      </thrust_model>
+      <origin rpy="0.0 0.0 0.0" xyz="-0.472 -0.28 0.0245"/>
+      <link name="blueboat/base_link"/>
+    </actuator>
+
+    <!-- SENSORS =============================================================== -->
+    <sensor name="dvl" type="dvl" rate="5.0">
+      <link name="blueboat/base_link"/>
+      <origin rpy="3.1416 0.0 -0.785" xyz="-0.75 0.0 0.4"/>
+      <specs beam_angle="30.0"/>
+      <range velocity="9.0 9.0 9.0" altitude_min="0.5" altitude_max="81.0"/>
+      <noise velocity="0.0015" altitude="0.001"/>
+      <ros_publisher topic="/blueboat/navigator/dvl_sim" altitude_topic="/bluebloat/navigator/altitude"/>
+    </sensor>
+
+    <sensor name="imu_link" type="imu" rate="200.0">
+      <link name="blueboat/base_link"/>
+      <origin rpy="3.1416 0.0 0" xyz="0.115 -0.36 -0.25"/>
+      <noise angle="0.0" angular_velocity="0.0"/>
+      <ros_publisher topic="/blueboat/navigator/imu"/>
+    </sensor>
+
+    <sensor name="gps" type="gps" rate="1.0">
+      <link name="blueboat/base_link"/>
+      <origin rpy="0.0 0.0 0.0" xyz="-0.35 0.15 -0.35"/>
+      <noise ned_position="0.5"/>
+      <ros_publisher topic="/blueboat/navigator/gps"/>
+    </sensor>
+
+    <sensor name="camera_link" type="camera" rate="30.0">
+      <link name="blueboat/base_link"/>
+      <origin rpy="0.0 0.0 1.5708" xyz="0.175 0.0 -0.13"/>
+      <specs resolution_x="640" resolution_y="480" horizontal_fov="80.0"/>
+      <ros_publisher topic="/blueboat/camera/image_raw"/>
+    </sensor>
+
+    <sensor name="lidar_front" type="livox_mid360_cpu" rate="10">
+      <link name="blueboat/base_link"/>
+      <origin xyz="0.115 -0.36 -0.25" rpy="3.1416 0 0"/>
+      <specs horizontal_res="312" vertical_res="64"
+             point_rate="200000"
+             horizontal_fov="360"
+             vmin_deg="0" vmax_deg="52"
+             lines="4"
+             non_repetitive="1"
+             lidar_id="0"/>
+      <range min="2.0" max="70.0"/>
+      <ros_publisher topic="blueboat/livox" frame_id="blueboat/lidar_front"/>
+    </sensor>
+
+    <sensor name="odom_gt" type="odometry" rate="30.0">
+      <link name="blueboat/base_link"/>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+      <noise position="0.00" velocity="0.00" angle="0.00" angular_velocity="0.0"/>
+      <ros_publisher topic="/blueboat/navigator/odometry"/>
+    </sensor>
+
+    <!-- Pose inicial del robot en el mundo -->
+    <world_transform rpy="0.0 0.0 0.0" xyz="0 0 0.1"/>
+
+    <!-- ROS I/O del control de thrusters -->
+    <ros_subscriber thrusters="/blueboat/controller/thruster_setpoints_sim"/>
+    <ros_publisher thrusters="/blueboat/controller/thruster_state"/>
+
+    <!-- Si prefieres TF base_link desde Stonefish, ponlo true; tú lo tienes false -->
+    <ros_base_link_transforms publish="false"/>
+  </robot>
+</scenario>

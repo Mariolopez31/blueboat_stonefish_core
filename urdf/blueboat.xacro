@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="blueboat">
+
+  <xacro:macro name="blueboat_macro" params="prefix">
+
+    <!-- =========================================================
+         1) base_link (ENU) -> lo usa FastLIO como body_frame
+         ========================================================= -->
+    <link name="${prefix}base_link_enu"/>        <!-- ENU -->
+    <link name="${prefix}base_link"/>    <!-- NED -->
+
+    <joint name="${prefix}enu_to_ned_joint" type="fixed">
+      <parent link="${prefix}base_link_enu"/>
+      <child  link="${prefix}base_link"/>
+      <origin xyz="0 0 0" rpy="3.1416 0 0"/>
+    </joint>
+
+    <!-- =========================================================
+         3) Mesh solo visual (cuelga del NED físico)
+         ========================================================= -->
+    <link name="${prefix}base_link_urdf">
+      <visual>
+        <origin rpy="3.1416 0 -1.5708" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://blueboat_stonefish/meshes/blueboat.dae" scale="1 1 1"/>
+        </geometry>
+        <material name="blue"><color rgba="0 0 1 1"/></material>
+      </visual>
+      <collision>
+        <origin rpy="3.1416 0 -1.5708" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://blueboat_stonefish/meshes/blueboat.dae" scale="1 1 1"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${prefix}base_link_urdf_joint" type="fixed">
+      <parent link="${prefix}base_link"/>
+      <child  link="${prefix}base_link_urdf"/>
+      <origin xyz="-0.275 0 -0.23" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Cámara (usa offsets de Stonefish) -->
+    <link name="${prefix}camera_link"/>
+    <joint name="${prefix}camera_joint" type="fixed">
+      <parent link="${prefix}base_link"/>
+      <child link="${prefix}camera_link"/>
+      <origin xyz="0.175 0.0 -0.13" rpy="0.0 0 1.5708"/>
+    </joint>
+
+    <!-- LiDAR (usa offsets de Stonefish) --> 
+    <link name="${prefix}lidar_front"/>
+    <joint name="${prefix}lidar_joint" type="fixed">
+      <parent link="${prefix}base_link"/>
+      <child link="${prefix}lidar_front"/>
+      <origin xyz="0.115 -0.36 -0.25" rpy="3.1416 0 0"/>
+    </joint>
+
+    <!-- GPS (usa offsets de Stonefish) -->
+    <link name="${prefix}gps_frame"/>
+    <joint name="${prefix}gps_joint" type="fixed">
+      <parent link="${prefix}base_link"/>
+      <child link="${prefix}gps_frame"/>
+      <origin xyz="-0.35 0.15 +0.35" rpy="0 0 0"/>
+    </joint>
+
+    <!-- IMU = LiDAR -->
+    <link name="${prefix}imu_link"/>
+    <joint name="${prefix}imu_joint" type="fixed">
+      <parent link="${prefix}base_link"/>
+      <child link="${prefix}imu_link"/>
+      <origin xyz="0.115 -0.36 -0.25" rpy="3.1416 0 0"/>
+    </joint>
+
+  </xacro:macro>
+
+  <xacro:blueboat_macro prefix="blueboat/"/>
+</robot>
