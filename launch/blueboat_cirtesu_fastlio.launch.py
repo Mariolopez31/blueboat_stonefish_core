@@ -89,7 +89,7 @@ def generate_launch_description():
 
     rviz_cfg = PathJoinSubstitution([
         FindPackageShare("blueboat_stonefish_core"),
-        "config",
+        "rviz",
         "blueboat_cirtesu_config.rviz",
     ])
     rviz_node = Node(
@@ -132,6 +132,16 @@ def generate_launch_description():
             # "localizer_cfg": PathJoinSubstitution([FindPackageShare("localizer"), "config", "localizer.yaml"]),
         }.items(),
     )
+    
+    bridge_teleop_include = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare("blueboat_stonefish_mav2ros2"),
+                "launch",
+                "blueboat_stonefish_mav2ros2.launch.py",
+            ])
+        )
+    )
 
     return LaunchDescription([
         robot_name_arg,
@@ -143,4 +153,5 @@ def generate_launch_description():
         livox2_to_pc2_node,
         fastlio_loc_include,
         rviz_node,
+        bridge_teleop_include,
     ])

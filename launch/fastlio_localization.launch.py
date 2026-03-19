@@ -4,12 +4,13 @@ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, Text
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
+
 def generate_launch_description():
     use_sim_time = LaunchConfiguration("use_sim_time")
     fastlio_cfg = LaunchConfiguration("fastlio_cfg")
     localizer_cfg = LaunchConfiguration("localizer_cfg")
 
-    pcd_path = LaunchConfiguration("pcd_path")
+    pcd_file = LaunchConfiguration("pcd_file")
     init_x = LaunchConfiguration("init_x")
     init_y = LaunchConfiguration("init_y")
     init_z = LaunchConfiguration("init_z")
@@ -17,6 +18,12 @@ def generate_launch_description():
     init_roll = LaunchConfiguration("init_roll")
     init_pitch = LaunchConfiguration("init_pitch")
     relocalize_delay = LaunchConfiguration("relocalize_delay")
+
+    pcd_path = PathJoinSubstitution([
+        FindPackageShare("fast_lio"),
+        "PCD",
+        pcd_file,
+    ])
 
     fastlio_node = Node(
         package="fast_lio",
@@ -35,7 +42,6 @@ def generate_launch_description():
         parameters=[{"config_path": localizer_cfg}],
     )
 
-    # Construimos un string YAML completo
     req = [
         TextSubstitution(text="{pcd_path: '"), pcd_path,
         TextSubstitution(text="', x: "), init_x,
@@ -47,11 +53,15 @@ def generate_launch_description():
         TextSubstitution(text="}")
     ]
 
-    # OJO: aquí usamos bash -lc para que el argumento se pase como UNA sola cadena
     relocalize_call = ExecuteProcess(
         cmd=[
             "bash", "-lc",
-            ["ros2 service call /localizer/relocalize interface/srv/Relocalize \"", *req, TextSubstitution(text="\"")]
+            [
+                "ros2 service call /localizer/relocalize "
+                "interface/srv/Relocalize \"",
+                *req,
+                TextSubstitution(text="\"")
+            ]
         ],
         output="screen",
     )
@@ -65,15 +75,24 @@ def generate_launch_description():
         DeclareLaunchArgument("use_sim_time", default_value="false"),
         DeclareLaunchArgument(
             "fastlio_cfg",
-            default_value=PathJoinSubstitution([FindPackageShare("fast_lio"), "config", "mid360.yaml"]),
+            default_value=PathJoinSubstitution([
+                FindPackageShare("fast_lio"),
+                "config",
+                "mid360.yaml"
+            ]),
         ),
         DeclareLaunchArgument(
             "localizer_cfg",
-            default_value=PathJoinSubstitution([FindPackageShare("localizer"), "config", "localizer.yaml"]),
+            default_value=PathJoinSubstitution([
+                FindPackageShare("localizer"),
+                "config",
+                "localizer.yaml"
+            ]),
         ),
         DeclareLaunchArgument(
-            "pcd_path",
-            default_value="/home/mario-cirtesu/cirtesu_ws/src/blueboat_stonefish/src/FASTLIO_cirtesu/fast_lio/PCD/scans_23.pcd",
+            "pcd_file",
+            default_value="scans_23.pcd",
+            description="Name of the map inside fast_lio/PCD/"
         ),
         DeclareLaunchArgument("init_x", default_value="0.0"),
         DeclareLaunchArgument("init_y", default_value="0.0"),

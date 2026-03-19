@@ -29,7 +29,7 @@
       <collision>
         <origin rpy="3.1416 0 -1.5708" xyz="0 0 0"/>
         <geometry>
-          <mesh filename="package://blueboat_stonefish/meshes/blueboat.dae" scale="1 1 1"/>
+          <mesh filename="package://blueboat_stonefish_core/meshes/blueboat.dae" scale="1 1 1"/>
         </geometry>
       </collision>
     </link>
