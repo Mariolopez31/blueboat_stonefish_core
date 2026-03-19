@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>blueboat_stonefish</name>
+  <name>blueboat_stonefish_core</name>
   <version>1.0.0</version>
   <description>Simulación del BlueBoat en Stonefish con LiDAR 3D customizado</description>
   <maintainer email="al427817@uji.es">mario</maintainer>

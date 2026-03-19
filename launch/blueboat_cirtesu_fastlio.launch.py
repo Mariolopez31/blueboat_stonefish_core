@@ -15,7 +15,7 @@ def generate_launch_description():
     )
 
     xacro_file = PathJoinSubstitution([
-        FindPackageShare('blueboat_stonefish'),
+        FindPackageShare('blueboat_stonefish_core'),
         "urdf",
         "blueboat.xacro"
     ])
@@ -43,11 +43,11 @@ def generate_launch_description():
                 ),
                 launch_arguments={
                     "simulation_data": PathJoinSubstitution([
-                        FindPackageShare("blueboat_stonefish"),
+                        FindPackageShare("blueboat_stonefish_core"),
                         "data",
                     ]),
                     "scenario_desc": PathJoinSubstitution([
-                        FindPackageShare("blueboat_stonefish"),
+                        FindPackageShare("blueboat_stonefish_core"),
                         "scenarios",
                         "blueboat_cirtesu_full_tank.scn",
                     ]),
@@ -80,7 +80,7 @@ def generate_launch_description():
     )
 
     cirtesu_mesh = Node(
-        package="blueboat_stonefish",
+        package="blueboat_stonefish_core",
         executable="cirtesu_mesh_marker.py",
         name="cirtesu_mesh_marker",
         output="screen",
@@ -88,7 +88,7 @@ def generate_launch_description():
     )
 
     rviz_cfg = PathJoinSubstitution([
-        FindPackageShare("blueboat_stonefish"),
+        FindPackageShare("blueboat_stonefish_core"),
         "config",
         "blueboat_cirtesu_config.rviz",
     ])
@@ -120,7 +120,7 @@ def generate_launch_description():
     fastlio_loc_include = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([
-                FindPackageShare("blueboat_stonefish"),
+                FindPackageShare("blueboat_stonefish_core"),
                 "launch",
                 "fastlio_localization.launch.py",
             ])

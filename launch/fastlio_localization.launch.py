@@ -73,7 +73,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "pcd_path",
-            default_value="/home/mario-cirtesu/cirtesu_ws/src/fast_lio_ros2/PCD/scans_23.pcd",
+            default_value="/home/mario-cirtesu/cirtesu_ws/src/blueboat_stonefish/src/FASTLIO_cirtesu/fast_lio/PCD/scans_23.pcd",
         ),
         DeclareLaunchArgument("init_x", default_value="0.0"),
         DeclareLaunchArgument("init_y", default_value="0.0"),

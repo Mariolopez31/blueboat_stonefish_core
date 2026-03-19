@@ -18,7 +18,7 @@ def generate_launch_description():
     )
     
     xacro_file = PathJoinSubstitution([
-        FindPackageShare('blueboat_stonefish'),
+        FindPackageShare('blueboat_stonefish_core'),
         "urdf",
         "blueboat.xacro"
     ])
@@ -43,10 +43,10 @@ def generate_launch_description():
                 ]),
                 launch_arguments={
                     'simulation_data': PathJoinSubstitution([
-                        FindPackageShare('blueboat_stonefish'), 'data'
+                        FindPackageShare('blueboat_stonefish_core'), 'data'
                     ]),
                     'scenario_desc': PathJoinSubstitution([
-                        FindPackageShare('blueboat_stonefish'), 'scenarios' ,'blueboat_cirtesu_full_tank.scn'
+                        FindPackageShare('blueboat_stonefish_core'), 'scenarios' ,'blueboat_cirtesu_full_tank.scn'
                     ]),
                     'simulation_rate': '100.0',
                     'window_res_x': '1200',
@@ -65,7 +65,7 @@ def generate_launch_description():
         namespace_action
     ,
         Node(
-        package='blueboat_stonefish',
+        package='blueboat_stonefish_core',
         executable='odom2tf.py',
         output='screen',
         parameters=[{'use_sim_time': True}],
@@ -76,7 +76,7 @@ def generate_launch_description():
             executable='rviz2',
             name='rviz2',
             parameters=[{'use_sim_time': True}],
-            arguments=['-d', PathJoinSubstitution(['src', 'blueboat_stonefish', 'config', 'blueboat_cirtesu_config.rviz'])],
+            arguments=['-d', PathJoinSubstitution(['src', 'blueboat_stonefish_core', 'config', 'blueboat_cirtesu_config.rviz'])],
             output='screen'
         ),
 

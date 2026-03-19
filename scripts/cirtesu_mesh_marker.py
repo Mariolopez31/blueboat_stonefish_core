@@ -4,7 +4,7 @@ from rclpy.node import Node
 from visualization_msgs.msg import Marker, MarkerArray
 from tf_transformations import quaternion_from_euler
 
-CIRTESU_MESH_PATH = "package://blueboat_stonefish/meshes/cirtesu.dae"
+CIRTESU_MESH_PATH = "package://blueboat_stonefish_core/meshes/cirtesu.dae"
 
 class CirtesuMesh(Node):
     def __init__(self):

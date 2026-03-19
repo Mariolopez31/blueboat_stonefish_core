@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(blueboat_stonefish)
+project(blueboat_stonefish_core)
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)

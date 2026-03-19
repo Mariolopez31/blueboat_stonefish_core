@@ -33,9 +33,9 @@
 		</friction_table>
 	</materials>
 
-	<include file="$(find blueboat_stonefish/scenarios/cirtesu/cirtesu_poster.scn" />
+	<include file="$(find blueboat_stonefish_core)/scenarios/cirtesu/cirtesu_poster.scn" />
 
-<include file="$(find blueboat_stonefish)/scenarios/cirtesu/blueboat.scn"> 
+<include file="$(find blueboat_stonefish_core)/scenarios/cirtesu/blueboat.scn"> 
 		<arg name="position" value="0.0 0.0 0.0"/>
 	</include>
 </scenario>
