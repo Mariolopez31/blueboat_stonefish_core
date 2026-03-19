@@ -89,7 +89,7 @@ def generate_launch_description():
 
     rviz_cfg = PathJoinSubstitution([
         FindPackageShare("blueboat_stonefish_core"),
-        "rviz",
+        "config",
         "blueboat_cirtesu_config.rviz",
     ])
     rviz_node = Node(
