@@ -20,17 +20,24 @@ def generate_launch_description():
     relocalize_delay = LaunchConfiguration("relocalize_delay")
 
     pcd_path = PathJoinSubstitution([
-        FindPackageShare("fast_lio"),
+        FindPackageShare("fastlio2"),
         "PCD",
         pcd_file,
     ])
 
     fastlio_node = Node(
         package="fast_lio",
+        namespace="fast_lio",
         executable="fastlio_mapping",
-        name="laser_mapping",
+        name="fastlio_mapping",
         output="screen",
         parameters=[fastlio_cfg, {"use_sim_time": use_sim_time}],
+        remappings=[
+            ("/livox/lidar", "/stonefish_ros2/blueboat/livox"),
+            ("/livox/imu", "/blueboat/navigator/imu"),
+            ("/cloud_registered_body", "/fastlio2/body_cloud"),
+            ("/Odometry", "/fastlio2/lio_odom"),
+        ],
     )
 
     localizer_node = Node(
@@ -42,34 +49,37 @@ def generate_launch_description():
         parameters=[{"config_path": localizer_cfg}],
     )
 
-    req = [
-        TextSubstitution(text="{pcd_path: '"), pcd_path,
-        TextSubstitution(text="', x: "), init_x,
-        TextSubstitution(text=", y: "), init_y,
-        TextSubstitution(text=", z: "), init_z,
-        TextSubstitution(text=", yaw: "), init_yaw,
-        TextSubstitution(text=", roll: "), init_roll,
-        TextSubstitution(text=", pitch: "), init_pitch,
-        TextSubstitution(text="}")
-    ]
-
-    relocalize_call = ExecuteProcess(
-        cmd=[
-            "bash", "-lc",
-            [
-                "ros2 service call /localizer/relocalize "
-                "interface/srv/Relocalize \"",
-                *req,
-                TextSubstitution(text="\"")
-            ]
-        ],
-        output="screen",
-    )
-
-    relocalize_timer = TimerAction(
-        period=relocalize_delay,
-        actions=[relocalize_call],
-    )
+    # Old automatic relocalization path disabled.
+    # The relocalize service is now expected to be called by the ArUco-based trigger.
+    #
+    # req = [
+    #     TextSubstitution(text="{pcd_path: '"), pcd_path,
+    #     TextSubstitution(text="', x: "), init_x,
+    #     TextSubstitution(text=", y: "), init_y,
+    #     TextSubstitution(text=", z: "), init_z,
+    #     TextSubstitution(text=", yaw: "), init_yaw,
+    #     TextSubstitution(text=", roll: "), init_roll,
+    #     TextSubstitution(text=", pitch: "), init_pitch,
+    #     TextSubstitution(text="}")
+    # ]
+    #
+    # relocalize_call = ExecuteProcess(
+    #     cmd=[
+    #         "bash", "-lc",
+    #         [
+    #             "ros2 service call /localizer/relocalize "
+    #             "interface/srv/Relocalize \"",
+    #             *req,
+    #             TextSubstitution(text="\"")
+    #         ]
+    #     ],
+    #     output="screen",
+    # )
+    #
+    # relocalize_timer = TimerAction(
+    #     period=relocalize_delay,
+    #     actions=[relocalize_call],
+    # )
 
     return LaunchDescription([
         DeclareLaunchArgument("use_sim_time", default_value="false"),
@@ -91,8 +101,8 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "pcd_file",
-            default_value="scans_23.pcd",
-            description="Name of the map inside fast_lio/PCD/"
+            default_value="sim_cirtesu.pcd",
+            description="Name of the map inside /PCD/"
         ),
         DeclareLaunchArgument("init_x", default_value="0.0"),
         DeclareLaunchArgument("init_y", default_value="0.0"),
@@ -101,8 +111,7 @@ def generate_launch_description():
         DeclareLaunchArgument("init_roll", default_value="0.0"),
         DeclareLaunchArgument("init_pitch", default_value="0.0"),
         DeclareLaunchArgument("relocalize_delay", default_value="3.0"),
-
         fastlio_node,
         localizer_node,
-        relocalize_timer,
+        # relocalize_timer,
     ])

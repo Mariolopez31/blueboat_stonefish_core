@@ -14,10 +14,24 @@ def generate_launch_description():
         description='Name of the robot'
     )
 
+    lookup_csv_arg = DeclareLaunchArgument(
+        'lookup_csv',
+        default_value='',
+        description='Path to thruster lookup CSV'
+    )
+
     xacro_file = PathJoinSubstitution([
-        FindPackageShare('blueboat_stonefish_core'),
+        FindPackageShare('blueboat_cirtesu_description'),
         "urdf",
-        "blueboat.xacro"
+        "blueboat_enu.xacro"
+    ])
+
+    robot_description_content = Command([
+        "xacro ",
+        xacro_file,
+        " environment:=sim",
+        " lookup_csv:=",
+        LaunchConfiguration("lookup_csv"),
     ])
 
     robot_state_publisher_node = Node(
@@ -25,7 +39,7 @@ def generate_launch_description():
         executable="robot_state_publisher",
         name="robot_state_publisher",
         parameters=[{
-            "robot_description": Command(["xacro ", xacro_file]),
+            "robot_description": robot_description_content,
             "use_sim_time": False,
         }],
         output="screen",
@@ -101,7 +115,7 @@ def generate_launch_description():
         output="screen",
     )
 
-    # Livox CustomMsg -> PointCloud2 
+    # Livox CustomMsg -> PointCloud2
     livox2_to_pc2_node = Node(
         package="livox2_to_pc2",
         executable="livox2_to_pc2",
@@ -127,12 +141,9 @@ def generate_launch_description():
         ),
         launch_arguments={
             "use_sim_time": "false",
-            # optional: 
-            # "fastlio_cfg": PathJoinSubstitution([FindPackageShare("fast_lio"), "config", "mid360.yaml"]),
-            # "localizer_cfg": PathJoinSubstitution([FindPackageShare("localizer"), "config", "localizer.yaml"]),
         }.items(),
     )
-    
+
     bridge_teleop_include = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([
@@ -145,6 +156,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         robot_name_arg,
+        lookup_csv_arg,
         robot_state_publisher_node,
         namespace_action,
         world_to_map,

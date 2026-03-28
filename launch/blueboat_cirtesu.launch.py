@@ -64,12 +64,12 @@ def generate_launch_description():
         robot_state_publisher_node,
         namespace_action
     ,
-        Node(
-        package='blueboat_stonefish_core',
-        executable='odom2tf.py',
-        output='screen',
-        parameters=[{'use_sim_time': True}],
-        ),
+        # Node(
+        # package='blueboat_stonefish_core',
+        # executable='odom2tf.py',
+        # output='screen',
+        # parameters=[{'use_sim_time': True}],
+        # ),
             
         Node(
             package='rviz2',
