@@ -4,6 +4,7 @@ from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDesc
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, Command
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from launch_ros.parameter_descriptions import ParameterValue
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
@@ -23,7 +24,7 @@ def generate_launch_description():
     xacro_file = PathJoinSubstitution([
         FindPackageShare('blueboat_cirtesu_description'),
         "urdf",
-        "blueboat_enu.xacro"
+        "blueboat_enu_sim.xacro"
     ])
 
     robot_description_content = Command([
@@ -39,7 +40,7 @@ def generate_launch_description():
         executable="robot_state_publisher",
         name="robot_state_publisher",
         parameters=[{
-            "robot_description": robot_description_content,
+            "robot_description": ParameterValue(robot_description_content, value_type=str),
             "use_sim_time": False,
         }],
         output="screen",
