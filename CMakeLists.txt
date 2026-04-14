@@ -43,13 +43,11 @@ install(
   DESTINATION lib/${PROJECT_NAME}
 )
 
-# Launch files: install only once
 install(
-  DIRECTORY data/launch/
-  DESTINATION share/${PROJECT_NAME}/launch
+  DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}
 )
 
-# Data folders except launch
 install(
   DIRECTORY
     data/blueboat

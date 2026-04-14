@@ -112,6 +112,6 @@ def generate_launch_description():
         DeclareLaunchArgument("init_pitch", default_value="0.0"),
         DeclareLaunchArgument("relocalize_delay", default_value="3.0"),
         fastlio_node,
-        localizer_node,
+        # localizer_node,
         # relocalize_timer,
     ])
