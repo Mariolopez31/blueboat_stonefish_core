@@ -35,7 +35,7 @@
 
 	<include file="$(find blueboat_stonefish_core)/scenarios/cirtesu_full_roof.scn" />
 
-<include file="$(find blueboat_stonefish_core)/scenarios/blueboat_lidar.scn"> 
+<include file="$(find blueboat_stonefish_core)/scenarios/test.scn"> 
 		<arg name="position" value="0.0 0.0 0.0"/>
 	</include>
 </scenario>

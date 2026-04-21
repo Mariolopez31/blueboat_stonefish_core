@@ -36,7 +36,7 @@ def generate_launch_description():
             ("/livox/lidar", "/stonefish_ros2/blueboat/livox"),
             ("/livox/imu", "/blueboat/navigator/imu"),
             ("/cloud_registered_body", "/fastlio2/body_cloud"),
-            ("/Odometry", "/fastlio2/lio_odom"),
+            ("/Odometry", "/catamaran/odometry"),
         ],
     )
 
