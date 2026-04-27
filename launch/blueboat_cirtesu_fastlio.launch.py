@@ -66,7 +66,7 @@ def generate_launch_description():
                         "scenarios",
                         "blueboat_cirtesu_full_tank.scn",
                     ]),
-                    "simulation_rate": "100.0",
+                    "simulation_rate": "200.0",
                     "window_res_x": "1200",
                     "window_res_y": "800",
                     "rendering_quality": "high",
@@ -142,6 +142,9 @@ def generate_launch_description():
         ),
         launch_arguments={
             "use_sim_time": "false",
+            "robot_description": robot_description_content,
+            "body_frame": "blueboat/base_link_enu",
+            "sensor_frame": "blueboat/lidar_front",
         }.items(),
     )
 

@@ -40,6 +40,7 @@ install(
   PROGRAMS
     scripts/odom2tf.py
     scripts/cirtesu_mesh_marker.py
+    scripts/tf_debug_poses.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

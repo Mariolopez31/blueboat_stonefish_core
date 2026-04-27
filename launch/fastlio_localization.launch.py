@@ -3,12 +3,16 @@ from launch.actions import DeclareLaunchArgument, TimerAction, ExecuteProcess
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, TextSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration("use_sim_time")
     fastlio_cfg = LaunchConfiguration("fastlio_cfg")
     localizer_cfg = LaunchConfiguration("localizer_cfg")
+    robot_description = LaunchConfiguration("robot_description")
+    body_frame = LaunchConfiguration("body_frame")
+    sensor_frame = LaunchConfiguration("sensor_frame")
 
     pcd_file = LaunchConfiguration("pcd_file")
     init_x = LaunchConfiguration("init_x")
@@ -31,7 +35,13 @@ def generate_launch_description():
         executable="fastlio_mapping",
         name="fastlio_mapping",
         output="screen",
-        parameters=[fastlio_cfg, {"use_sim_time": use_sim_time}],
+        parameters=[
+            fastlio_cfg,
+            {"use_sim_time": use_sim_time},
+            {"robot_description": ParameterValue(robot_description, value_type=str)},
+            {"frames.body_frame": body_frame},
+            {"frames.sensor_frame": sensor_frame},
+        ],
         remappings=[
             ("/livox/lidar", "/stonefish_ros2/blueboat/livox"),
             ("/livox/imu", "/blueboat/navigator/imu"),
@@ -83,6 +93,9 @@ def generate_launch_description():
 
     return LaunchDescription([
         DeclareLaunchArgument("use_sim_time", default_value="false"),
+        DeclareLaunchArgument("robot_description", default_value=""),
+        DeclareLaunchArgument("body_frame", default_value="blueboat/base_link_enu"),
+        DeclareLaunchArgument("sensor_frame", default_value="blueboat/lidar_front"),
         DeclareLaunchArgument(
             "fastlio_cfg",
             default_value=PathJoinSubstitution([
