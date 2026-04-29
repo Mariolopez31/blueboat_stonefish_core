@@ -223,7 +223,7 @@
 
 		<sensor name="imu_link" type="imu" rate="200.0">
 			<link name="blueboat/base_link"/>
-			<origin rpy="3.1416 0.0 0" xyz="0.115 -0.36 -0.25"/>
+			<origin rpy="3.1416 0.0 1.5708" xyz="0.39 -0.36 -0.25"/>
 			<noise angle="0.0" angular_velocity="0.0"/>
 			<ros_publisher topic="/blueboat/navigator/imu"/>
 		</sensor>
@@ -245,7 +245,7 @@
 
 		<sensor name="lidar_front" type="livox_mid360_cpu" rate="10">
 		<link name="blueboat/base_link"/>
-		<origin xyz="0.115 -0.36 -0.25" rpy="3.1416 0 0"/>
+		<origin xyz="0.39 -0.36 -0.25" rpy="3.1416 0 1.5708"/>
 		<specs horizontal_res="312" vertical_res="64"
 				point_rate="200000"
 				horizontal_fov="360"

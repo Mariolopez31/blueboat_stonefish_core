@@ -41,6 +41,7 @@ def generate_launch_description():
             {"robot_description": ParameterValue(robot_description, value_type=str)},
             {"frames.body_frame": body_frame},
             {"frames.sensor_frame": sensor_frame},
+            {"frames.base_link_enu_to_livox_T": [0.39, 0.36, 0.25]},
         ],
         remappings=[
             ("/livox/lidar", "/stonefish_ros2/blueboat/livox"),
