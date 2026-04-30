@@ -551,18 +551,24 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /blueboat/navigator/aruco_pose
       Value: true
-    - Class: rviz_default_plugins/Marker
+    - Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Class: rviz_default_plugins/Pose
+      Color: 0; 255; 0
       Enabled: true
-      Name: Marker
-      Namespaces:
-        {}
+      Head Length: 0.30000001192092896
+      Head Radius: 0.10000000149011612
+      Name: Body Position Setpoint
+      Shaft Length: 1
+      Shaft Radius: 0.05000000074505806
+      Shape: Arrow
       Topic:
         Depth: 5
         Durability Policy: Volatile
-        Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /body_position/target_marker
+        Value: /body_position/setpoint
       Value: true
   Enabled: true
   Global Options:
@@ -589,12 +595,7 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /initialpose
     - Class: rviz_default_plugins/SetGoal
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /goal_pose
+      Topic: /body_position/setpoint
     - Class: rviz_default_plugins/PublishPoint
       Single click: true
       Topic:
