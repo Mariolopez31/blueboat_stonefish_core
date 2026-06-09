@@ -7,12 +7,15 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
+    robot_namespace = LaunchConfiguration("robot_namespace")
     use_sim_time = LaunchConfiguration("use_sim_time")
     fastlio_cfg = LaunchConfiguration("fastlio_cfg")
     localizer_cfg = LaunchConfiguration("localizer_cfg")
     robot_description = LaunchConfiguration("robot_description")
     body_frame = LaunchConfiguration("body_frame")
     sensor_frame = LaunchConfiguration("sensor_frame")
+    lidar_topic = LaunchConfiguration("lidar_topic")
+    imu_topic = LaunchConfiguration("imu_topic")
 
     pcd_file = LaunchConfiguration("pcd_file")
     init_x = LaunchConfiguration("init_x")
@@ -44,10 +47,15 @@ def generate_launch_description():
             {"frames.base_link_enu_to_livox_T": [0.39, 0.36, 0.25]},
         ],
         remappings=[
-            ("/livox/lidar", "/stonefish_ros2/blueboat/livox"),
-            ("/livox/imu", "/blueboat/navigator/imu"),
-            ("/cloud_registered_body", "/fastlio2/body_cloud"),
-            ("/Odometry", "/catamaran/odometry"),
+            ("/livox/lidar", lidar_topic),
+            ("/livox/imu", imu_topic),
+            ("/cloud_registered_body", ["/", robot_namespace, "/fastlio/body_cloud"]),
+            ("/cloud_registered", ["/", robot_namespace, "/fastlio/cloud_registered"]),
+            ("/cloud_effected", ["/", robot_namespace, "/fastlio/cloud_effected"]),
+            ("/Laser_map", ["/", robot_namespace, "/fastlio/laser_map"]),
+            ("/path", ["/", robot_namespace, "/fastlio/path"]),
+            ("/Odometry", ["/", robot_namespace, "/fastlio/odometry"]),
+            ("/catamaran/odometry", ["/", robot_namespace, "/fastlio/odometry"]),
         ],
     )
 
@@ -93,10 +101,13 @@ def generate_launch_description():
     # )
 
     return LaunchDescription([
+        DeclareLaunchArgument("robot_namespace", default_value="blueboat"),
         DeclareLaunchArgument("use_sim_time", default_value="false"),
         DeclareLaunchArgument("robot_description", default_value=""),
-        DeclareLaunchArgument("body_frame", default_value="blueboat/base_link_enu"),
-        DeclareLaunchArgument("sensor_frame", default_value="blueboat/lidar_front"),
+        DeclareLaunchArgument("body_frame", default_value=[robot_namespace, "/base_link_enu"]),
+        DeclareLaunchArgument("sensor_frame", default_value=[robot_namespace, "/lidar_front"]),
+        DeclareLaunchArgument("lidar_topic", default_value=["/", robot_namespace, "/livox/points"]),
+        DeclareLaunchArgument("imu_topic", default_value=["/", robot_namespace, "/navigator/imu"]),
         DeclareLaunchArgument(
             "fastlio_cfg",
             default_value=PathJoinSubstitution([

@@ -185,7 +185,6 @@
 
             <origin rpy="0.0 0.0 0.0" xyz="-0.472 -0.28 0.0245"/>
             <link name="blueboat/base_link"/>
-			<ros_publisher wrench_topic="/blueboat/debug/thruster_l_wrench"/>
         </actuator>
 
 		<actuator name="Thruster_R" type="thruster">
@@ -208,7 +207,6 @@
 
             <origin rpy="0.0 0.0 0.0" xyz="-0.472 0.28 0.0245"/>
             <link name="blueboat/base_link"/> 
-			<ros_publisher wrench_topic="/blueboat/debug/thruster_r_wrench"/>
         </actuator>
 
 
@@ -218,7 +216,7 @@
 			<specs beam_angle="30.0"/>
 			<range velocity="9.0 9.0 9.0" altitude_min="0.5" altitude_max="81.0"/>
 			<noise velocity="0.0015" altitude="0.001"/>
-			<ros_publisher topic="/blueboat/navigator/dvl_sim" altitude_topic="/bluebloat/navigator/altitude"/>
+			<ros_publisher topic="/blueboat/navigator/dvl_sim" altitude_topic="/blueboat/catamaran/altitude"/>
 		</sensor>
 
 		<sensor name="imu_link" type="imu" rate="200.0">
@@ -272,15 +270,14 @@
 
 		<noise position="0.00" velocity="0.00" angle="0.00" angular_velocity="0.0"/>
 
-		<ros_publisher topic="/blueboat/navigator/odometry"/>
+		<ros_publisher topic="/blueboat/catamaran/odometry"/>
 		</sensor>
 		
 		<world_transform rpy="0.0 0.0 0.0" xyz="0 0 0.1"/>
 		
 
-		<ros_debug physics="/blueboat/debug/physics"/>
-	       <ros_subscriber thrusters="/catamaran/controller/thruster_setpoints_sim"/>
-		<ros_publisher thrusters="/catamaran/controller/thruster_state"/>
+	       <ros_subscriber thrusters="/blueboat/catamaran/controller/thruster_setpoints_sim"/>
+		<ros_publisher thrusters="/blueboat/catamaran/controller/thruster_state"/>
 		<ros_base_link_transforms publish="false"/>
 	</robot>
 </scenario>

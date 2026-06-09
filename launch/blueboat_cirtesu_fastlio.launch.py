@@ -9,6 +9,12 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def generate_launch_description():
+    robot_namespace_arg = DeclareLaunchArgument(
+        'robot_namespace',
+        default_value='blueboat',
+        description='Namespace prefix applied to BlueBoat simulation topics'
+    )
+
     robot_name_arg = DeclareLaunchArgument(
         'robot_name',
         default_value='blueboat',
@@ -22,7 +28,7 @@ def generate_launch_description():
     )
 
     xacro_file = PathJoinSubstitution([
-        FindPackageShare('blueboat_cirtesu_description'),
+        FindPackageShare('blueboat_description'),
         "urdf",
         "blueboat_enu_sim.xacro"
     ])
@@ -30,9 +36,14 @@ def generate_launch_description():
     robot_description_content = Command([
         "xacro ",
         xacro_file,
+        " robot_namespace:=",
+        LaunchConfiguration("robot_namespace"),
         " environment:=sim",
         " lookup_csv:=",
         LaunchConfiguration("lookup_csv"),
+        " stonefish_topic:=/",
+        LaunchConfiguration("robot_namespace"),
+        "/catamaran/controller/thruster_setpoints_sim",
     ])
 
     robot_state_publisher_node = Node(
@@ -124,8 +135,8 @@ def generate_launch_description():
         output="screen",
         parameters=[{
             "in_topic": "/stonefish_ros2/blueboat/livox",
-            "out_topic": "/blueboat/livox/points",
-            "frame_id": "blueboat/lidar_front",
+            "out_topic": ["/", LaunchConfiguration("robot_namespace"), "/livox/points"],
+            "frame_id": [LaunchConfiguration("robot_namespace"), "/lidar_front"],
             "include_ring": True,
             "reliability": "best_effort",
         }],
@@ -142,9 +153,10 @@ def generate_launch_description():
         ),
         launch_arguments={
             "use_sim_time": "false",
+            "robot_namespace": LaunchConfiguration("robot_namespace"),
             "robot_description": robot_description_content,
-            "body_frame": "blueboat/base_link_enu",
-            "sensor_frame": "blueboat/lidar_front",
+            "body_frame": [LaunchConfiguration("robot_namespace"), "/base_link_enu"],
+            "sensor_frame": [LaunchConfiguration("robot_namespace"), "/lidar_front"],
         }.items(),
     )
 
@@ -159,6 +171,7 @@ def generate_launch_description():
     # )
 
     return LaunchDescription([
+        robot_namespace_arg,
         robot_name_arg,
         lookup_csv_arg,
         robot_state_publisher_node,
